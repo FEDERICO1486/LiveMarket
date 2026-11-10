@@ -1,122 +1,14 @@
-
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vendi un articolo | LiveMarket</title><style>
+:root{--teal:#087f78;--ink:#26343a;--line:#e1e7e8;--bg:#f6f8f8}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.5 system-ui,Arial,sans-serif;color:var(--ink)}header{background:white;border-bottom:1px solid var(--line)}.bar{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px;padding:15px 20px;flex-wrap:wrap}.brand{font-size:28px;font-weight:800;color:var(--teal);text-decoration:none}header a{color:var(--teal)}main{max-width:1100px;margin:auto;padding:20px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:10px}.panel h2{margin-top:0}.back{display:inline-block;margin:0 0 12px;color:var(--teal);text-decoration:none;font-weight:700}.muted{color:#637477;font-size:13px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}input,select,textarea{font:inherit;border:1px solid #cbd5d6;border-radius:8px;padding:11px;width:100%;background:white}button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 15px;border:1px solid var(--teal);font-weight:650;background:var(--teal);color:white}button:disabled{opacity:.6;cursor:wait}.preview{width:140px;max-height:140px;object-fit:contain;display:none;border-radius:8px;margin-top:8px}footer{text-align:center;padding:35px;color:#68787a}@media(max-width:600px){.formgrid{grid-template-columns:1fr}}
+</style></head><body><header><div class="bar"><a class="brand" href="index.html">LiveMarket</a><a href="index.html">Home</a><a href="index.html#articoli">Articoli</a><a href="index.html#dirette">🔴 LIVE</a></div></header><main><a class="back" href="index.html">← Torna al sito</a><section class="panel" id="vendi"><h2>Pubblica un articolo</h2><p class="muted">Gli articoli pubblicati sono visibili a tutti gli utenti di LiveMarket.</p><p id="accountNotice" class="muted" role="status">Verifica accesso...</p><form id="sellForm" class="formgrid" style="display:none"><label class="field">Nome articolo<input id="name" maxlength="100" required placeholder="Es. Giacca vintage"></label><label class="field">Prezzo (€)<input id="price" type="number" min="0.01" step="0.01" max="1000000" required placeholder="25.00"></label><label class="field">Categoria<select id="sellCategory" required><option>Abbigliamento</option><option>Elettronica</option><option>Videogiochi</option><option>Casa</option><option>Altro</option></select></label><label class="field">Nome venditore<input id="seller" maxlength="60" required placeholder="Il tuo nome pubblico"></label><label class="field full">Descrizione<textarea id="description" maxlength="500" rows="3" placeholder="Descrivi l'articolo..."></textarea></label><label class="field full">Foto prodotto (facoltativa, massimo 400 KB)<input id="photo" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><img class="preview" id="preview" alt="Anteprima foto"></label><div class="full"><button id="submitButton" type="submit">Pubblica articolo</button> <span class="muted" id="message" role="status"></span></div></form></section></main><footer>© 2026 LiveMarket</footer>
 <script type="module">
-import { watchUser } from './auth.js';
-import { firebaseConfig } from './firebase-config.js';
-
-import { initializeApp, getApps, getApp }
-  from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js';
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
-
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const $ = id => document.getElementById(id);
-
-let user = null;
-
-const notice = document.createElement('p');
-notice.className = 'muted';
-notice.setAttribute('role', 'status');
-$('vendi').prepend(notice);
-
-const form = $('sellForm');
-const submitButton = form.querySelector('button[type="submit"]');
-form.style.display = 'none';
-
-watchUser(u => {
-  user = u;
-
-  if (!u) {
-    notice.innerHTML =
-      'Per vendere devi prima <a href="accesso.html?next=vendi">' +
-      'accedere o creare un account</a>.';
-    form.style.display = 'none';
-    return;
-  }
-
-  notice.textContent =
-    'Account: ' + (u.displayName || u.email || 'Utente') +
-    '. I tuoi articoli saranno pubblicati online.';
-
-  $('seller').value = u.displayName || u.email || '';
-  form.style.display = 'grid';
-});
-
-$('photo').addEventListener('change', () => {
-  const file = $('photo').files[0];
-  $('preview').style.display = 'none';
-
-  if (!file) return;
-
-  if (!file.type.startsWith('image/') || file.size > 1024 * 1024) {
-    alert('Scegli un’immagine di massimo 1 MB.');
-    $('photo').value = '';
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    $('preview').src = reader.result;
-    $('preview').style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-});
-
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-
-  if (!user) {
-    $('message').textContent = 'Devi effettuare l’accesso.';
-    return;
-  }
-
-  const name = $('name').value.trim();
-  const seller = $('seller').value.trim();
-  const price = Number($('price').value);
-  const description = $('description').value.trim();
-  const category = $('sellCategory').value;
-
-  if (!name || !seller || !Number.isFinite(price) || price <= 0) {
-    $('message').textContent = 'Controlla i dati dell’articolo.';
-    return;
-  }
-
-  if ($('photo').files.length) {
-    $('message').textContent =
-      'Per pubblicare una foto online dobbiamo ancora configurare Storage. ' +
-      'Rimuovi la foto per pubblicare adesso.';
-    return;
-  }
-
-  submitButton.disabled = true;
-  $('message').textContent = 'Pubblicazione in corso...';
-
-  try {
-    await addDoc(collection(db, 'articoli'), {
-      name,
-      seller,
-      price,
-      category,
-      description,
-      venditoreId: user.uid,
-      photo: '',
-      createdAt: serverTimestamp()
-    });
-
-    $('message').textContent = 'Articolo pubblicato!';
-    window.location.href = 'index.html#articoli';
-
-  } catch (error) {
-    console.error('Errore pubblicazione:', error);
-    $('message').textContent =
-      'Pubblicazione non riuscita: ' + error.message;
-  } finally {
-    submitButton.disabled = false;
-  }
-});
-</script>
+import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import {getFirestore,collection,addDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import {firebaseConfig} from './firebase-config.js';
+import {watchUser} from './auth.js';
+const $=id=>document.getElementById(id);const app=getApps().length?getApp():initializeApp(firebaseConfig);const db=getFirestore(app);
+let user=null,photoData='';const MAX_PHOTO_BYTES=400*1024;
+watchUser(u=>{user=u;if(!u){$('accountNotice').replaceChildren(document.createTextNode('Per vendere devi prima '));const a=document.createElement('a');a.href='accesso.html?next=vendi';a.textContent='accedere o creare un account';$('accountNotice').append(a,document.createTextNode('.'));$('sellForm').style.display='none'}else{$('accountNotice').textContent='Account: '+(u.displayName||u.email||'Utente autenticato');$('seller').value=u.displayName||u.email||'';$('sellForm').style.display='grid'}});
+$('photo').addEventListener('change',()=>{const file=$('photo').files[0];photoData='';$('preview').style.display='none';$('preview').removeAttribute('src');if(!file)return;if(!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)||file.size>MAX_PHOTO_BYTES){$('message').textContent='Scegli una foto JPG, PNG, WebP o GIF di massimo 400 KB.';$('photo').value='';return}$('message').textContent='';const reader=new FileReader();reader.onload=()=>{photoData=String(reader.result||'');$('preview').src=photoData;$('preview').style.display='block'};reader.onerror=()=>{$('message').textContent='Impossibile leggere la foto.'};reader.readAsDataURL(file)});
+$('sellForm').addEventListener('submit',async e=>{e.preventDefault();if(!user){$('message').textContent='Devi accedere per pubblicare.';return}const name=$('name').value.trim(),seller=$('seller').value.trim(),price=Number($('price').value),description=$('description').value.trim(),category=$('sellCategory').value;if(!name||!seller||!Number.isFinite(price)||price<=0||price>1000000)return;if($('photo').files.length&&!photoData){$('message').textContent='Attendi il caricamento della foto.';return}const button=$('submitButton');button.disabled=true;$('message').textContent='Pubblicazione in corso...';try{await addDoc(collection(db,'articoli'),{name,seller,price,category,description,photo:photoData,venditoreId:user.uid,createdAt:serverTimestamp()});location.href='index.html#articoli'}catch(err){console.error(err);$('message').textContent='Pubblicazione non riuscita. Controlla la connessione e le regole Firestore.';button.disabled=false}});
+</script></body></html>
