@@ -1,6 +1,6 @@
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyAHP_gtOZB87ydvS2Kw_EvNmcoTYL-UNso",
+  apiKey: "AIzaSyAHP_gtOZBo7ydvS2Kw_EvNmcoTYl-UNso",
   authDomain: "livemarket-8f866.firebaseapp.com",
   projectId: "livemarket-8f866",
   storageBucket: "livemarket-8f866.firebasestorage.app",
