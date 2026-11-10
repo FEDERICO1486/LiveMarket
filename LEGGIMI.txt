@@ -1,15 +1,24 @@
-LiveMarket - Aggiornamento accesso e articoli
+LIVEMARKET - FILE AGGIORNATI (10 novembre 2026)
 
-Carica su GitHub nella radice del repository LiveMarket:
-  firebase-config.js, auth.js, accesso.html, index.html, vendi.html, style.css
+Carica nella RADICE del repository GitHub LiveMarket:
+- index.html
+- accesso.html
+- vendi.html
+- auth.js
+- firebase-config.js
+- style.css
 
-NON caricare firestore.rules come file del sito: incollane il contenuto nella scheda Firestore > Regole e premi Pubblica.
+ATTENZIONE: la apiKey e ancora un segnaposto perche NON era presente nei file forniti.
+Devi copiare la vera apiKey Web dalla console Firebase del progetto livemarket-8f866
+e sostituire SOLO INSERISCI_LA_TUA_API_KEY nel file firebase-config.js.
+Non inserire credenziali service-account o chiavi private.
 
-OBBLIGATORIO:
-1. In firebase-config.js sostituisci INSERISCI_LA_TUA_API_KEY con la vera apiKey Web da Firebase Console > Impostazioni progetto > Le tue app > Config.
-2. Firebase Authentication > Metodo di accesso: abilita Google e Email/Password. Configura email assistenza Google.
-3. Firebase Authentication > Impostazioni > Domini autorizzati: federico1486.github.io.
-4. Pubblica le regole Firestore incluse.
-5. Attendi GitHub Pages, poi Ctrl+F5 e prova accesso, registrazione, recupero password, pubblicazione.
+In Firebase Authentication abilita Google e Email/Password.
+In Authentication > Impostazioni > Domini autorizzati verifica federico1486.github.io.
+In Firestore > Regole incolla firestore.rules e premi Pubblica: non basta caricare
+firestore.rules su GitHub.
 
-NOTA: Foto di max 200 KB incorporate nel documento Firestore. Per un progetto reale e' meglio usare Firebase Storage con regole dedicate. Questa versione non implementa dirette streaming, pagamenti, messaggistica o moderazione.
+Attendi la pubblicazione di GitHub Pages, ricarica con Ctrl+F5.
+Le funzioni non sono state testate con un account Firebase reale.
+LIVE resta una sezione informativa: streaming non implementato.
+Le foto piccole sono memorizzate in Firestore come dati; non e Firebase Storage.

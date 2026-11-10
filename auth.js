@@ -1,13 +1,13 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
-import { firebaseConfig, firebaseReady } from './firebase-config.js';
+import { firebaseConfig, firebaseReady } from './firebase-config.js?v=20261110b';
 
 if (!firebaseReady) console.warn('Inserisci la vera apiKey Firebase in firebase-config.js');
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const watchUser = callback => onAuthStateChanged(auth, callback);
+export const watchUser = (callback, onError) => onAuthStateChanged(auth, callback, onError);
 export const logout = () => signOut(auth);
 export const loginEmail = (email, password) => signInWithEmailAndPassword(auth, email, password);
 export async function registerEmail(name, email, password) {
@@ -19,6 +19,7 @@ export const resetPassword = email => sendPasswordResetEmail(auth, email);
 export const loginGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 export function friendlyError(error) {
   const messages = {
+    'auth/network-request-failed':'Impossibile raggiungere Firebase. Controlla la connessione.',
     'auth/invalid-api-key':'Chiave Firebase non valida: controlla apiKey in firebase-config.js.',
     'auth/api-key-not-valid.-please-pass-a-valid-api-key.':'Chiave Firebase non valida: controlla apiKey in firebase-config.js.',
     'auth/operation-not-allowed':'Metodo di accesso disattivato: abilitalo in Firebase Authentication.',
