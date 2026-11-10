@@ -1,12 +1,122 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vendi un articolo | LiveMarket</title><style>
-:root{--teal:#087f78;--ink:#26343a;--line:#e1e7e8;--bg:#f6f8f8}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.5 system-ui,Arial,sans-serif;color:var(--ink)}header{background:white;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:3}.bar{max-width:1200px;margin:auto;display:flex;align-items:center;gap:14px;padding:15px 20px;flex-wrap:wrap}.brand{font-size:28px;font-weight:800;color:var(--teal);text-decoration:none}.search{flex:1;min-width:160px}input,select,textarea{font:inherit;border:1px solid #cbd5d6;border-radius:8px;padding:11px;width:100%;background:white}button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 15px;border:1px solid var(--teal);font-weight:650;background:white;color:var(--teal)}button.primary{background:var(--teal);color:white}nav{max-width:1200px;margin:auto;display:flex;gap:8px;padding:0 20px 12px;flex-wrap:wrap}nav button{border:0}main{max-width:1200px;margin:auto;padding:20px}.hero{background:linear-gradient(115deg,#087f78,#29afa1);color:white;border-radius:16px;padding:34px;margin-bottom:28px}.hero h1{font-size:clamp(26px,4vw,40px);margin:0}.hero p{margin-bottom:0}.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.filters select{width:auto;min-width:190px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}.card{background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden}.thumb{aspect-ratio:4/3;background:#e6eeee;display:flex;align-items:center;justify-content:center;font-size:65px}.thumb img{width:100%;height:100%;object-fit:cover}.info{padding:14px}.info h3{margin:0 0 5px;font-size:16px}.price{font-size:20px;font-weight:800;color:var(--teal)}.muted{color:#637477;font-size:13px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:28px}.panel h2{margin-top:0}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}.preview{width:140px;max-height:140px;object-fit:contain;display:none;border-radius:8px;margin-top:8px}.livebox{background:#14292c;color:white;min-height:190px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}.livepill{background:#e62c55;color:white;border-radius:6px;padding:4px 12px;font-weight:800}footer{text-align:center;padding:35px;color:#68787a}.hidden{display:none!important}@media(max-width:600px){.formgrid{grid-template-columns:1fr}.bar{gap:8px}.brand{width:100%}.hero{padding:24px}}
 
-main{max-width:1100px}.panel{margin-top:10px}.back{display:inline-block;margin:0 0 12px;color:var(--teal);text-decoration:none;font-weight:700}</style></head><body><header><div class="bar"><a class="brand" href="index.html">LiveMarket</a><a href="index.html">Home</a><a href="index.html#articoli">Articoli</a><a href="index.html#dirette">🔴 LIVE</a></div></header><main><a class="back" href="index.html">← Torna al sito</a><section class="panel" id="vendi"><h2>Pubblica un articolo</h2><p class="muted">Versione dimostrativa: gli articoli sono salvati soltanto in questo browser, non sono pubblicati per altri utenti.</p><form id="sellForm" class="formgrid"><label class="field">Nome articolo<input id="name" maxlength="100" required placeholder="Es. Giacca vintage"></label><label class="field">Prezzo (€)<input id="price" type="number" min="0.01" step="0.01" required placeholder="25.00"></label><label class="field">Categoria<select id="sellCategory" required><option>Abbigliamento</option><option>Elettronica</option><option>Videogiochi</option><option>Casa</option><option>Altro</option></select></label><label class="field">Nome venditore<input id="seller" maxlength="60" required placeholder="Il tuo nome pubblico"></label><label class="field full">Descrizione<textarea id="description" maxlength="500" rows="3" placeholder="Descrivi l'articolo..."></textarea></label><label class="field full">Foto prodotto (facoltativa, massimo 1 MB)<input id="photo" type="file" accept="image/*"><img class="preview" id="preview" alt="Anteprima foto"></label><div class="full"><button class="primary" type="submit">Aggiungi articolo</button> <span class="muted" id="message" role="status"></span></div></form></section></main><footer>© 2026 LiveMarket · Sito dimostrativo</footer><script type="module">
-import {watchUser} from './auth.js';
-const $=id=>document.getElementById(id);let user=null;
-const notice=document.createElement('p');notice.className='muted';notice.setAttribute('role','status');$('vendi').prepend(notice);
-$('sellForm').style.display='none';
-watchUser(u=>{user=u;if(!u){notice.innerHTML='Per vendere devi prima <a href="accesso.html?next=vendi">accedere o creare un account</a>.';$('sellForm').style.display='none'}else{notice.textContent='Account: '+(u.displayName||u.email)+'. Gli articoli restano salvati solo su questo dispositivo.';$('seller').value=u.displayName||u.email||'';$('sellForm').style.display='grid'}});
-$('photo').addEventListener('change',()=>{const file=$('photo').files[0];$('preview').style.display='none';if(!file)return;if(!file.type.startsWith('image/')||file.size>1024*1024){alert('Scegli una immagine di massimo 1 MB.');$('photo').value='';return}const reader=new FileReader();reader.onload=()=>{$('preview').src=reader.result;$('preview').style.display='block'};reader.readAsDataURL(file)});
-$('sellForm').addEventListener('submit',e=>{e.preventDefault();if(!user)return;const name=$('name').value.trim(),seller=$('seller').value.trim(),price=Number($('price').value);if(!name||!seller||!Number.isFinite(price)||price<=0)return;const photo=$('preview').style.display==='block'?$('preview').src:'';let items=[];try{const saved=JSON.parse(localStorage.getItem('livemarket_items_v2')||'[]');if(Array.isArray(saved))items=saved}catch{};const item={name,seller,price,category:$('sellCategory').value,description:$('description').value.trim(),photo};try{localStorage.setItem('livemarket_items_v2',JSON.stringify([item,...items]));location.href='index.html#articoli'}catch{$('message').textContent='Spazio del browser insufficiente. Prova con una foto più piccola.'}});
-</script></body></html>
+<script type="module">
+import { watchUser } from './auth.js';
+import { firebaseConfig } from './firebase-config.js';
+
+import { initializeApp, getApps, getApp }
+  from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js';
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
+
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+let user = null;
+
+const notice = document.createElement('p');
+notice.className = 'muted';
+notice.setAttribute('role', 'status');
+$('vendi').prepend(notice);
+
+const form = $('sellForm');
+const submitButton = form.querySelector('button[type="submit"]');
+form.style.display = 'none';
+
+watchUser(u => {
+  user = u;
+
+  if (!u) {
+    notice.innerHTML =
+      'Per vendere devi prima <a href="accesso.html?next=vendi">' +
+      'accedere o creare un account</a>.';
+    form.style.display = 'none';
+    return;
+  }
+
+  notice.textContent =
+    'Account: ' + (u.displayName || u.email || 'Utente') +
+    '. I tuoi articoli saranno pubblicati online.';
+
+  $('seller').value = u.displayName || u.email || '';
+  form.style.display = 'grid';
+});
+
+$('photo').addEventListener('change', () => {
+  const file = $('photo').files[0];
+  $('preview').style.display = 'none';
+
+  if (!file) return;
+
+  if (!file.type.startsWith('image/') || file.size > 1024 * 1024) {
+    alert('Scegli un’immagine di massimo 1 MB.');
+    $('photo').value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    $('preview').src = reader.result;
+    $('preview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+
+  if (!user) {
+    $('message').textContent = 'Devi effettuare l’accesso.';
+    return;
+  }
+
+  const name = $('name').value.trim();
+  const seller = $('seller').value.trim();
+  const price = Number($('price').value);
+  const description = $('description').value.trim();
+  const category = $('sellCategory').value;
+
+  if (!name || !seller || !Number.isFinite(price) || price <= 0) {
+    $('message').textContent = 'Controlla i dati dell’articolo.';
+    return;
+  }
+
+  if ($('photo').files.length) {
+    $('message').textContent =
+      'Per pubblicare una foto online dobbiamo ancora configurare Storage. ' +
+      'Rimuovi la foto per pubblicare adesso.';
+    return;
+  }
+
+  submitButton.disabled = true;
+  $('message').textContent = 'Pubblicazione in corso...';
+
+  try {
+    await addDoc(collection(db, 'articoli'), {
+      name,
+      seller,
+      price,
+      category,
+      description,
+      venditoreId: user.uid,
+      photo: '',
+      createdAt: serverTimestamp()
+    });
+
+    $('message').textContent = 'Articolo pubblicato!';
+    window.location.href = 'index.html#articoli';
+
+  } catch (error) {
+    console.error('Errore pubblicazione:', error);
+    $('message').textContent =
+      'Pubblicazione non riuscita: ' + error.message;
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+</script>
