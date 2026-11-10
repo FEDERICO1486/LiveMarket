@@ -1,0 +1,12 @@
+LIVEMARKET - ATTIVAZIONE ACCESSO GOOGLE
+
+1. Vai su https://console.firebase.google.com e crea/apri il progetto LiveMarket.
+2. Aggiungi una app Web nelle impostazioni del progetto e copia i valori firebaseConfig.
+3. Apri firebase-config.js e sostituisci INSERISCI_* con i valori WEB del tuo progetto.
+4. Authentication > Sign-in method: abilita Google e Email/Password.
+5. Authentication > Settings > Authorized domains: aggiungi federico1486.github.io.
+6. Carica i file nella radice del repository FEDERICO1486/LiveMarket e attendi GitHub Pages.
+7. Apri https://federico1486.github.io/LiveMarket/accesso.html
+
+NON inserire password, service account o chiavi private in GitHub.
+Senza la configurazione Firebase reale il login non funziona: nessun file puo sostituire questa attivazione.
