@@ -8,7 +8,7 @@
 </style>
 </head>
 <body>
-<header><div class="bar"><a class="brand" href="#home">LiveMarket</a><input class="search" id="search" placeholder="Cerca articoli..." aria-label="Cerca articoli"><button id="share">Condividi</button><button class="primary" onclick="location.href='vendi.html'">+ Vendi</button></div><nav><button data-target="home">Home</button><button data-target="articoli">Articoli</button><button data-target="dirette">🔴 LIVE</button><button onclick="location.href='vendi.html'">Vendi</button></nav></header>
+<header><div class="bar"><a class="brand" href="#home">LiveMarket</a><input class="search" id="search" placeholder="Cerca articoli..." aria-label="Cerca articoli"><button id="share">Condividi</button><a id="accountLink" href="accesso.html" style="color:#087f78;font-weight:700;text-decoration:none">Accedi / Registrati</a><button id="logout" class="hidden">Esci</button><button class="primary" onclick="location.href='vendi.html'">+ Vendi</button></div><nav><button data-target="home">Home</button><button data-target="articoli">Articoli</button><button data-target="dirette">🔴 LIVE</button><button onclick="location.href='vendi.html'">Vendi</button></nav></header>
 <main><section class="hero" id="home"><h1>Compra, vendi e scopri LiveMarket</h1><p>Il tuo mercatino online, semplice e intuitivo.</p></section>
 <section id="articoli"><h2>Articoli in vendita</h2><div class="filters"><label for="category">Categoria</label><select id="category"><option value="">Tutte le categorie</option><option>Abbigliamento</option><option>Elettronica</option><option>Videogiochi</option><option>Casa</option><option>Altro</option></select><span class="muted" id="count"></span></div><div class="grid" id="catalog"></div></section>
 <section class="panel" id="dirette"><h2>🔴 Dirette LiveMarket</h2><div class="livebox"><span class="livepill">LIVE</span><h3>Qui vedrai le dirette dei venditori</h3><p>La trasmissione video verrà collegata in futuro al programma Windows LiveMarket Studio.</p></div></section>
@@ -24,4 +24,5 @@ document.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click'
 $('share').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);alert('Link del sito copiato!')}catch{prompt('Copia il link del sito:',location.href)}});
 render();if(location.hash==='#articoli'||location.hash==='#dirette')setTimeout(()=>show(location.hash.slice(1)),60);
 </script>
+<script type="module">import {watchUser,logout} from "./auth.js";const link=document.getElementById("accountLink"),out=document.getElementById("logout");watchUser(u=>{link.textContent=u?(u.displayName||u.email||"Il mio account"):"Accedi / Registrati";link.href=u?"accesso.html":"accesso.html";out.classList.toggle("hidden",!u)});out.onclick=async()=>{await logout();location.reload()};</script>
 </body></html>

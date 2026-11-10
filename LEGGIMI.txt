@@ -1,0 +1,12 @@
+LIVEMARKET - ACCESSO ACCOUNT CON FIREBASE
+
+1. Carica tutti i file di questo ZIP nella cartella principale di github.com/FEDERICO1486/LiveMarket (sostituisci index.html e vendi.html).
+2. Apri https://console.firebase.google.com/ e crea un progetto LiveMarket.
+3. Aggiungi una app Web (icona </>) e copia la configurazione Firebase WEB in firebase-config.js. Non usare chiavi private.
+4. Firebase Console > Authentication > Sign-in method: abilita Email/Password e Google; per Google imposta l'email di supporto.
+5. Firebase Console > Authentication > Settings > Authorized domains: aggiungi federico1486.github.io.
+6. Attendi GitHub Pages, poi apri https://federico1486.github.io/LiveMarket/accesso.html
+
+Nota: finche' firebase-config.js contiene INSERISCI_, l'accesso resta disabilitato.
+Gli articoli rimangono nel localStorage del singolo browser, NON sono pubblicati per tutti.
+NON caricare su GitHub password, service-account JSON o chiavi private Firebase.
