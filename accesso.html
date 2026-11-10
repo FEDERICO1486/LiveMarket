@@ -1,23 +1,49 @@
 <!doctype html>
 <html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Accedi | LiveMarket</title><link rel="stylesheet" href="style.css"></head>
 <body><main class="auth-wrap"><section class="panel auth-card">
-<a class="back" href="index.html">← Torna a LiveMarket</a><h1 id="heading">Accedi a LiveMarket</h1><p class="muted" id="intro">Accedi con email e password o con Google.</p>
-<form id="form"><label class="field hidden" id="nameField">Nome pubblico<input id="name" maxlength="60" autocomplete="name"></label><label class="field">Email<input id="email" type="email" autocomplete="email" required></label><label class="field" id="passwordField">Password<input id="password" type="password" autocomplete="current-password" minlength="6" required></label><button class="primary wide" id="submit" type="submit">Accedi</button></form>
-<button id="google" class="wide" type="button">Continua con Google</button><div class="auth-links"><button class="link-btn" id="register" type="button">Crea nuovo account</button><button class="link-btn" id="forgot" type="button">Password dimenticata?</button></div>
-<p id="message" role="status" aria-live="polite" class="muted"></p>
+<a class="back" href="index.html">← Torna a LiveMarket</a>
+<h1 id="heading">Accedi a LiveMarket</h1><p class="muted" id="intro">Accedi con email e password o con Google.</p>
+<form id="form"><label id="nameField" class="field hidden">Nome pubblico<input id="name" autocomplete="name" maxlength="60"></label><label class="field">Email<input id="email" type="email" autocomplete="email" required></label><label id="passwordField" class="field">Password<input id="password" type="password" autocomplete="current-password" minlength="6" required></label><button id="submit" class="primary wide" type="submit">Accedi</button></form>
+<button id="google" class="wide" type="button">Continua con Google</button>
+<div class="auth-links"><button class="link-btn" id="register" type="button">Crea nuovo account</button><button class="link-btn" id="forgot" type="button">Password dimenticata?</button></div>
+<p id="message" role="status" aria-live="polite" class="muted"></p><p id="configNotice" role="alert" style="color:#b42318"></p>
 </section></main>
 <script type="module">
-const $ = id => document.getElementById(id);
-let mode='login', busy=false, api=null;
+import {firebaseReady} from './firebase-config.js';
+import {loginEmail,registerEmail,resetPassword,loginGoogle,friendlyError} from './auth.js';
+const $=id=>document.getElementById(id);
+let mode='login',busy=false;
 const destination=new URLSearchParams(location.search).get('next')==='vendi'?'vendi.html':'index.html';
-function message(text, error=false){$('message').textContent=text;$('message').style.color=error?'#b42318':'#087f78';}
-function setMode(next){if(busy)return;mode=next;message('');$('heading').textContent=mode==='register'?'Crea nuovo account':mode==='reset'?'Recupera la password':'Accedi a LiveMarket';$('intro').textContent=mode==='reset'?'Inserisci la tua email: riceverai un link per reimpostare la password.':'Accedi con email e password o con Google.';$('nameField').classList.toggle('hidden',mode!=='register');$('name').required=mode==='register';$('passwordField').classList.toggle('hidden',mode==='reset');$('password').required=mode!=='reset';$('password').autocomplete=mode==='register'?'new-password':'current-password';$('google').classList.toggle('hidden',mode==='reset');$('submit').textContent=mode==='register'?'Crea account':mode==='reset'?'Invia email di recupero':'Accedi';$('register').textContent=mode==='login'?'Crea nuovo account':'Torna all’accesso';$('forgot').classList.toggle('hidden',mode==='reset');}
+function setMode(value){
+ mode=value; $('message').textContent='';
+ $('heading').textContent=mode==='register'?'Crea nuovo account':mode==='reset'?'Recupera password':'Accedi a LiveMarket';
+ $('intro').textContent=mode==='reset'?'Inserisci la tua email per ricevere il link di recupero.':'Accedi con email e password o con Google.';
+ $('nameField').classList.toggle('hidden',mode!=='register');
+ $('passwordField').classList.toggle('hidden',mode==='reset');
+ $('password').required=mode!=='reset'; $('name').required=mode==='register';
+ $('password').autocomplete=mode==='register'?'new-password':'current-password';
+ $('google').classList.toggle('hidden',mode==='reset');
+ $('submit').textContent=mode==='register'?'Crea account':mode==='reset'?'Invia email di recupero':'Accedi';
+ $('register').textContent=mode==='login'?'Crea nuovo account':'Torna all’accesso';
+ $('forgot').classList.toggle('hidden',mode==='reset');
+}
 $('register').addEventListener('click',()=>setMode(mode==='login'?'register':'login'));
 $('forgot').addEventListener('click',()=>setMode('reset'));
-function setBusy(value){busy=value;$('submit').disabled=value;$('google').disabled=value;$('register').disabled=value;$('forgot').disabled=value;}
-async function ensureApi(){if(api)return api;const {firebaseReady}=await import('./firebase-config.js');if(!firebaseReady)throw new Error('Configurazione Firebase incompleta: apri firebase-config.js e sostituisci INSERISCI_LA_TUA_API_KEY con la vera apiKey Web.');api=await import('./auth.js');return api;}
-async function execute(kind){if(busy)return;setBusy(true);message('Connessione a Firebase...');try{const a=await ensureApi();const email=$('email').value.trim(),password=$('password').value;if(kind==='google'){await a.loginGoogle();}else if(kind==='reset'){if(!email)throw new Error('Inserisci la tua email.');await a.resetPassword(email);message('Richiesta inviata. Se esiste un account email/password per questo indirizzo, controlla la posta e lo spam.');return;}else if(kind==='register'){await a.registerEmail($('name').value.trim(),email,password);}else{await a.loginEmail(email,password);}location.assign(destination);}catch(e){message(api?.friendlyError?api.friendlyError(e):e.message||'Errore di connessione a Firebase.',true);}finally{setBusy(false);}}
-$('form').addEventListener('submit',e=>{e.preventDefault();execute(mode);});
-$('google').addEventListener('click',()=>execute('google'));
-import('./firebase-config.js').then(({firebaseReady})=>{if(!firebaseReady)message('Firebase non configurato: inserisci la vera apiKey in firebase-config.js. I pulsanti sono collegati ma il servizio non può autenticare finché manca la chiave.',true);}).catch(e=>message('Impossibile caricare firebase-config.js: '+e.message,true));
+if(!firebaseReady) $('configNotice').textContent='Firebase non configurato: apri firebase-config.js e sostituisci INSERISCI_LA_TUA_API_KEY con la vera apiKey Web del progetto. I pulsanti sono visibili ma non possono autenticare finché manca la chiave.';
+async function run(action,kind){
+ if(busy)return;
+ if(!firebaseReady){$('message').textContent='Prima configura la chiave apiKey in firebase-config.js.';return;}
+ busy=true; $('submit').disabled=true; $('google').disabled=true; $('message').textContent='Operazione in corso...';
+ try{await action();if(kind==='reset'){$('message').textContent='Se l’email è associata a un account, riceverai un messaggio di recupero. Controlla anche lo spam.';}else{location.assign(destination);}}
+ catch(e){console.error('Firebase Auth:',e);$('message').textContent=friendlyError(e);}
+ finally{busy=false;$('submit').disabled=false;$('google').disabled=false;}
+}
+$('form').addEventListener('submit',e=>{
+ e.preventDefault();const email=$('email').value.trim(),pass=$('password').value;
+ if(mode==='reset')run(()=>resetPassword(email),'reset');
+ else if(mode==='register')run(()=>registerEmail($('name').value.trim(),email,pass),'register');
+ else run(()=>loginEmail(email,pass),'login');
+});
+$('google').addEventListener('click',()=>run(loginGoogle,'google'));
+// Non reindirizzare automaticamente: il modulo di accesso resta sempre visibile.
 </script></body></html>

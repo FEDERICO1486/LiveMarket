@@ -1,24 +1,11 @@
-LIVEMARKET - FILE AGGIORNATI (10 novembre 2026)
+LIVEMARKET - RIPRISTINO ACCESSO
 
-Carica nella RADICE del repository GitHub LiveMarket:
-- index.html
-- accesso.html
-- vendi.html
-- auth.js
-- firebase-config.js
-- style.css
+1) Carica nella radice del repository GitHub: accesso.html, auth.js, firebase-config.js, index.html, vendi.html, style.css.
+2) In firebase-config.js sostituisci INSERISCI_LA_TUA_API_KEY con la vera apiKey Web presa da Firebase Console > Impostazioni progetto > Le tue app > Config.
+3) In Firebase Authentication > Metodo di accesso abilita Google ed Email/Password; verifica il dominio autorizzato federico1486.github.io.
+4) Copia il contenuto di firestore.rules nella Console Firebase > Firestore > Regole e pubblica. NON basta caricare il file su GitHub.
+5) Aspetta la pubblicazione GitHub Pages e aggiorna con Ctrl+F5.
 
-ATTENZIONE: la apiKey e ancora un segnaposto perche NON era presente nei file forniti.
-Devi copiare la vera apiKey Web dalla console Firebase del progetto livemarket-8f866
-e sostituire SOLO INSERISCI_LA_TUA_API_KEY nel file firebase-config.js.
-Non inserire credenziali service-account o chiavi private.
-
-In Firebase Authentication abilita Google e Email/Password.
-In Authentication > Impostazioni > Domini autorizzati verifica federico1486.github.io.
-In Firestore > Regole incolla firestore.rules e premi Pubblica: non basta caricare
-firestore.rules su GitHub.
-
-Attendi la pubblicazione di GitHub Pages, ricarica con Ctrl+F5.
-Le funzioni non sono state testate con un account Firebase reale.
-LIVE resta una sezione informativa: streaming non implementato.
-Le foto piccole sono memorizzate in Firestore come dati; non e Firebase Storage.
+La pagina accesso.html mostra Accedi, Continua con Google, Crea nuovo account e Password dimenticata. Non reindirizza automaticamente gli utenti gia' autenticati.
+Il recupero password richiede un indirizzo email valido e un account gestito da Firebase Authentication.
+La sezione LIVE resta non implementata. La configurazione remota Firebase non puo' essere attivata da questo ZIP.
