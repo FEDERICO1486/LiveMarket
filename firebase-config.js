@@ -1,7 +1,7 @@
 // Copia apiKey dalla Console Firebase > Impostazioni progetto > Le tue app > Config.
 // La chiave Web Firebase e' pubblica; NON inserire mai chiavi service-account o segreti server.
 export const firebaseConfig = {
-  apiKey: "INSERISCI_LA_TUA_API_KEY",
+  apiKey: "AIzaSyAHP_gtOZB87ydvS2Kw_EvNmcoTYL-UNso",
   authDomain: "livemarket-8f866.firebaseapp.com",
   projectId: "livemarket-8f866",
   storageBucket: "livemarket-8f866.firebasestorage.app",
