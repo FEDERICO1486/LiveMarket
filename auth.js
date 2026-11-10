@@ -1,13 +1,38 @@
-import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,createUserWithEmailAndPassword,signInWithEmailAndPassword,sendPasswordResetEmail,signOut,onAuthStateChanged,updateProfile} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import {firebaseConfig,firebaseReady} from './firebase-config.js';
-export const auth = firebaseReady ? getAuth(initializeApp(firebaseConfig)) : null;
-export const configured = firebaseReady;
-export function watchUser(fn){ if(!auth){fn(null);return()=>{}} return onAuthStateChanged(auth,fn); }
-export async function googleLogin(){ if(!auth)throw Error('Configura prima Firebase.');const provider=new GoogleAuthProvider();try{return await signInWithPopup(auth,provider)}catch(e){if(e.code==='auth/popup-blocked')return signInWithRedirect(auth,provider);throw e} }
-export async function redirectResult(){if(auth)return getRedirectResult(auth)}
-export async function emailLogin(email,password){if(!auth)throw Error('Configura prima Firebase.');return signInWithEmailAndPassword(auth,email,password)}
-export async function register(email,password,name){if(!auth)throw Error('Configura prima Firebase.');const result=await createUserWithEmailAndPassword(auth,email,password);if(name.trim())await updateProfile(result.user,{displayName:name.trim()});return result}
-export async function resetPassword(email){if(!auth)throw Error('Configura prima Firebase.');return sendPasswordResetEmail(auth,email)}
-export async function logout(){if(auth)await signOut(auth)}
-export function friendlyError(e){const codes={'auth/email-already-in-use':'Email già registrata.','auth/invalid-email':'Indirizzo email non valido.','auth/weak-password':'Password troppo debole (minimo 6 caratteri).','auth/invalid-credential':'Email o password non corretti.','auth/popup-closed-by-user':'Finestra Google chiusa prima di accedere.','auth/cancelled-popup-request':'Richiesta Google annullata.','auth/popup-blocked':'Il browser ha bloccato la finestra Google. Consenti i popup per questo sito.','auth/account-exists-with-different-credential':'Questa email usa già un altro metodo di accesso.','auth/unauthorized-domain':'Aggiungi federico1486.github.io ai domini autorizzati di Firebase.','auth/operation-not-allowed':'Attiva il metodo di accesso nella console Firebase.','auth/network-request-failed':'Connessione non disponibile.'};return codes[e?.code]||e?.message||'Si è verificato un errore.'}
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { firebaseConfig, firebaseReady } from './firebase-config.js';
+
+if (!firebaseReady) console.warn('Inserisci la vera apiKey Firebase in firebase-config.js');
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const watchUser = callback => onAuthStateChanged(auth, callback);
+export const logout = () => signOut(auth);
+export const loginEmail = (email, password) => signInWithEmailAndPassword(auth, email, password);
+export async function registerEmail(name, email, password) {
+  const result = await createUserWithEmailAndPassword(auth, email, password);
+  if (name.trim()) await updateProfile(result.user, { displayName: name.trim() });
+  return result;
+}
+export const resetPassword = email => sendPasswordResetEmail(auth, email);
+export const loginGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
+export function friendlyError(error) {
+  const messages = {
+    'auth/invalid-api-key':'Chiave Firebase non valida: controlla apiKey in firebase-config.js.',
+    'auth/api-key-not-valid.-please-pass-a-valid-api-key.':'Chiave Firebase non valida: controlla apiKey in firebase-config.js.',
+    'auth/operation-not-allowed':'Metodo di accesso disattivato: abilitalo in Firebase Authentication.',
+    'auth/unauthorized-domain':'Dominio non autorizzato: aggiungi federico1486.github.io in Firebase Authentication.',
+    'auth/popup-blocked':'Il browser ha bloccato la finestra Google. Consenti i popup.',
+    'auth/popup-closed-by-user':'Accesso Google annullato.',
+    'auth/account-exists-with-different-credential':'Questa email e gia associata a un altro metodo di accesso.',
+    'auth/email-already-in-use':'Questa email e gia registrata.',
+    'auth/invalid-email':'Indirizzo email non valido.',
+    'auth/weak-password':'Password troppo debole: usa almeno 6 caratteri.',
+    'auth/invalid-credential':'Email o password non corretti.',
+    'auth/too-many-requests':'Troppi tentativi. Riprova piu tardi.',
+    'permission-denied':'Operazione negata dalle regole Firestore.',
+    'unavailable':'Servizio temporaneamente non disponibile. Riprova.'
+  };
+  return messages[error?.code] || `Errore: ${error?.code || error?.message || 'sconosciuto'}`;
+}
