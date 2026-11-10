@@ -1,0 +1,10 @@
+LiveMarket - pulsanti account collegati a Firebase
+
+1. Carica nella RADICE GitHub: accesso.html, auth.js, firebase-config.js, index.html, vendi.html, style.css.
+2. IMPORTANTE: in firebase-config.js sostituisci INSERISCI_LA_TUA_API_KEY con la vera apiKey Web di Firebase (non la chiave privata).
+3. Firebase Console > Authentication > Metodo di accesso: abilita Email/Password e Google, e configura email di assistenza per Google.
+4. Authentication > Impostazioni > Domini autorizzati: federico1486.github.io.
+5. Firestore > Regole: pubblica il contenuto di firestore.rules. NON caricare le regole solo su GitHub.
+6. Attendi GitHub Pages, ricarica con Ctrl+F5 e prova i pulsanti.
+
+Non e possibile attivare da codice i provider nella console Firebase. Senza vera apiKey i pulsanti mostrano un errore chiaro invece di non rispondere.
