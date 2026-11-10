@@ -1,9 +1,12 @@
-// Incolla qui la configurazione WEB del tuo progetto Firebase.
-// Questi valori identificano il progetto; NON inserire chiavi private o service account.
+
 export const firebaseConfig = {
-  apiKey: "INSERISCI_API_KEY_WEB",
-  authDomain: "INSERISCI_PROJECT_ID.firebaseapp.com",
-  projectId: "INSERISCI_PROJECT_ID",
-  appId: "INSERISCI_APP_ID"
+  apiKey: "AIzaSyAHP_gtOZBo7ydvS2Kw_EvNmcoTYl-UNso",
+  authDomain: "livemarket-8f866.firebaseapp.com",
+  projectId: "livemarket-8f866",
+  storageBucket: "livemarket-8f866.firebasestorage.app",
+  messagingSenderId: "988167271488",
+  appId: "1:988167271488:web:d46eeee975aef8d3abdba5",
+  measurementId: "G-ZGS7Z4G67T"
 };
-export const firebaseReady = !Object.values(firebaseConfig).some(v => v.includes('INSERISCI_'));
+
+export const firebaseReady = true;
