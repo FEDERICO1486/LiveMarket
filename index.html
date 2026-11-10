@@ -1,1 +1,167 @@
 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveMarket - Mercato in diretta</title>
+<style>
+:root{--verde:#087f78;--chiaro:#e8f7f4}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:#263238;background:#f7f9fa}
+header{background:white;padding:18px 5%;display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #ddd}
+.logo{font-size:29px;font-weight:bold;color:var(--verde)}
+input{padding:13px;border:1px solid #ccc;border-radius:7px;flex:1;min-width:180px;font-size:15px}
+button{border:0;border-radius:7px;padding:12px 19px;cursor:pointer;font-weight:bold;font-size:14px}
+.primary{background:var(--verde);color:white}
+.secondary{background:var(--chiaro);color:var(--verde)}
+nav{display:flex;gap:10px;padding:12px 5%;background:white;flex-wrap:wrap}
+nav button{background:transparent}
+nav button:hover{background:var(--chiaro)}
+.hero{background:linear-gradient(120deg,#087f78,#28aaa1);color:white;padding:55px 6%;text-align:center}
+.hero h1{font-size:38px;margin:0 0 12px}
+.hero p{font-size:18px}
+main{max-width:1200px;margin:auto;padding:30px 20px}
+h2{margin:12px 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px}
+.card{background:white;border:1px solid #e3e6e8;border-radius:12px;overflow:hidden}
+.photo{height:205px;display:grid;place-items:center;background:#eaf2f1;font-size:85px}
+.details{padding:15px}
+.price{font-size:20px;font-weight:bold;color:var(--verde)}
+.muted{color:#68777a;font-size:13px}
+.live{background:#fff;border-radius:12px;padding:22px;margin-top:35px;border:1px solid #e3e6e8}
+.live-screen{background:#172327;color:white;border-radius:10px;min-height:210px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:20px}
+.tag{background:#e02b4d;color:white;padding:6px 12px;border-radius:6px;font-size:12px}
+.panel{background:white;border-radius:12px;padding:24px;margin-top:25px}
+.hidden{display:none}
+footer{text-align:center;padding:35px;color:#68777a}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">LiveMarket</div>
+<input id="search" placeholder="Cerca articoli..." oninput="filtra()">
+<button class="secondary" onclick="condividi()">Condividi</button>
+<button class="primary" onclick="mostra('vendi')">+ Vendi</button>
+</header>
+
+<nav>
+<button onclick="mostra('home')">Home</button>
+<button onclick="mostra('prodotti')">Articoli</button>
+<button onclick="mostra('dirette')">🔴 LIVE</button>
+<button onclick="mostra('vendi')">Vendi</button>
+</nav>
+
+<section class="hero">
+<h1>Compra, vendi e scopri le dirette LIVE</h1>
+<p>Il tuo mercato online, semplice e divertente.</p>
+<button onclick="mostra('prodotti')">Scopri gli articoli</button>
+</section>
+
+<main>
+<section id="home">
+<h2>Benvenuto su LiveMarket</h2>
+<p>Scopri i prodotti disponibili e visita la sezione delle dirette.</p>
+</section>
+
+<section id="prodotti">
+<h2>Articoli in vendita</h2>
+<div class="grid" id="catalogo"></div>
+</section>
+
+<section class="live" id="dirette">
+<h2>🔴 Dirette LiveMarket</h2>
+<div class="live-screen">
+<span class="tag">LIVE</span>
+<h2>Le dirette arriveranno qui</h2>
+<p>Presto potrai seguire i venditori in tempo reale.</p>
+</div>
+<p class="muted">La trasmissione video non è ancora attiva.</p>
+</section>
+
+<section class="panel hidden" id="vendi">
+<h2>Pubblica un articolo</h2>
+<p>Inserisci un prodotto nel catalogo dimostrativo.</p>
+<input id="nome" placeholder="Nome articolo"><br><br>
+<input id="prezzo" type="number" min="0" step="0.01" placeholder="Prezzo in euro"><br><br>
+<button class="primary" onclick="aggiungi()">Aggiungi articolo</button>
+<p class="muted">Gli articoli aggiunti sono salvati soltanto su questo dispositivo.</p>
+</section>
+</main>
+
+<footer>© 2026 LiveMarket - Mercato in diretta</footer>
+
+<script>
+const esempi=[
+ {nome:"Giacca vintage",prezzo:25,icona:"🧥"},
+ {nome:"Scarpe sportive",prezzo:40,icona:"👟"},
+ {nome:"Borsa elegante",prezzo:30,icona:"👜"},
+ {nome:"Orologio",prezzo:55,icona:"⌚"},
+ {nome:"Maglietta",prezzo:12,icona:"👕"},
+ {nome:"Videogioco",prezzo:20,icona:"🎮"}
+];
+let articoli;
+try {
+ articoli=JSON.parse(localStorage.getItem("livemarket_articoli"))||esempi;
+ if(!Array.isArray(articoli)) articoli=esempi;
+} catch(e){articoli=esempi;}
+
+function disegna(){
+ const ricerca=document.getElementById("search").value.toLowerCase();
+ const elenco=articoli.filter(a=>a.nome.toLowerCase().includes(ricerca));
+ const catalogo=document.getElementById("catalogo");
+ catalogo.replaceChildren();
+ elenco.forEach(a=>{
+  const card=document.createElement("article");
+  card.className="card";
+  const foto=document.createElement("div");
+  foto.className="photo";
+  foto.textContent=a.icona||"📦";
+  const dettagli=document.createElement("div");
+  dettagli.className="details";
+  const titolo=document.createElement("h3");
+  titolo.textContent=a.nome;
+  const prezzo=document.createElement("div");
+  prezzo.className="price";
+  prezzo.textContent=Number(a.prezzo).toLocaleString("it-IT",{style:"currency",currency:"EUR"});
+  const nota=document.createElement("p");
+  nota.className="muted";
+  nota.textContent="Articolo dimostrativo";
+  dettagli.append(titolo,prezzo,nota);
+  card.append(foto,dettagli);
+  catalogo.append(card);
+ });
+}
+function filtra(){disegna()}
+function mostra(id){
+ ["home","prodotti","dirette","vendi"].forEach(x=>{
+  document.getElementById(x).classList.toggle("hidden",x!==id);
+ });
+ document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+function aggiungi(){
+ const nome=document.getElementById("nome").value.trim();
+ const prezzo=Number(document.getElementById("prezzo").value);
+ if(!nome||!Number.isFinite(prezzo)||prezzo<=0){
+  alert("Inserisci nome e prezzo valido.");return;
+ }
+ articoli.unshift({nome,prezzo,icona:"📦"});
+ try{localStorage.setItem("livemarket_articoli",JSON.stringify(articoli))}catch(e){}
+ document.getElementById("nome").value="";
+ document.getElementById("prezzo").value="";
+ disegna();
+ mostra("prodotti");
+}
+async function condividi(){
+ const url=location.href;
+ try{
+  await navigator.clipboard.writeText(url);
+  alert("Link copiato!");
+ }catch(e){
+  prompt("Copia il link:",url);
+ }
+}
+disegna();
+</script>
+</body>
+</html>
