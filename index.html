@@ -1,167 +1,28 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LiveMarket - Mercato in diretta</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveMarket | Compra e vendi</title>
 <style>
-:root{--verde:#087f78;--chiaro:#e8f7f4}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;color:#263238;background:#f7f9fa}
-header{background:white;padding:18px 5%;display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #ddd}
-.logo{font-size:29px;font-weight:bold;color:var(--verde)}
-input{padding:13px;border:1px solid #ccc;border-radius:7px;flex:1;min-width:180px;font-size:15px}
-button{border:0;border-radius:7px;padding:12px 19px;cursor:pointer;font-weight:bold;font-size:14px}
-.primary{background:var(--verde);color:white}
-.secondary{background:var(--chiaro);color:var(--verde)}
-nav{display:flex;gap:10px;padding:12px 5%;background:white;flex-wrap:wrap}
-nav button{background:transparent}
-nav button:hover{background:var(--chiaro)}
-.hero{background:linear-gradient(120deg,#087f78,#28aaa1);color:white;padding:55px 6%;text-align:center}
-.hero h1{font-size:38px;margin:0 0 12px}
-.hero p{font-size:18px}
-main{max-width:1200px;margin:auto;padding:30px 20px}
-h2{margin:12px 0 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px}
-.card{background:white;border:1px solid #e3e6e8;border-radius:12px;overflow:hidden}
-.photo{height:205px;display:grid;place-items:center;background:#eaf2f1;font-size:85px}
-.details{padding:15px}
-.price{font-size:20px;font-weight:bold;color:var(--verde)}
-.muted{color:#68777a;font-size:13px}
-.live{background:#fff;border-radius:12px;padding:22px;margin-top:35px;border:1px solid #e3e6e8}
-.live-screen{background:#172327;color:white;border-radius:10px;min-height:210px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:20px}
-.tag{background:#e02b4d;color:white;padding:6px 12px;border-radius:6px;font-size:12px}
-.panel{background:white;border-radius:12px;padding:24px;margin-top:25px}
-.hidden{display:none}
-footer{text-align:center;padding:35px;color:#68777a}
+:root{--teal:#087f78;--ink:#26343a;--line:#e1e7e8;--bg:#f6f8f8}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.5 system-ui,Arial,sans-serif;color:var(--ink)}header{background:white;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:3}.bar{max-width:1200px;margin:auto;display:flex;align-items:center;gap:14px;padding:15px 20px;flex-wrap:wrap}.brand{font-size:28px;font-weight:800;color:var(--teal);text-decoration:none}.search{flex:1;min-width:160px}input,select,textarea{font:inherit;border:1px solid #cbd5d6;border-radius:8px;padding:11px;width:100%;background:white}button{font:inherit;cursor:pointer;border-radius:8px;padding:10px 15px;border:1px solid var(--teal);font-weight:650;background:white;color:var(--teal)}button.primary{background:var(--teal);color:white}nav{max-width:1200px;margin:auto;display:flex;gap:8px;padding:0 20px 12px;flex-wrap:wrap}nav button{border:0}main{max-width:1200px;margin:auto;padding:20px}.hero{background:linear-gradient(115deg,#087f78,#29afa1);color:white;border-radius:16px;padding:34px;margin-bottom:28px}.hero h1{font-size:clamp(26px,4vw,40px);margin:0}.hero p{margin-bottom:0}.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.filters select{width:auto;min-width:190px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}.card{background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden}.thumb{aspect-ratio:4/3;background:#e6eeee;display:flex;align-items:center;justify-content:center;font-size:65px}.thumb img{width:100%;height:100%;object-fit:cover}.info{padding:14px}.info h3{margin:0 0 5px;font-size:16px}.price{font-size:20px;font-weight:800;color:var(--teal)}.muted{color:#637477;font-size:13px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:28px}.panel h2{margin-top:0}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}.preview{width:140px;max-height:140px;object-fit:contain;display:none;border-radius:8px;margin-top:8px}.livebox{background:#14292c;color:white;min-height:190px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}.livepill{background:#e62c55;color:white;border-radius:6px;padding:4px 12px;font-weight:800}footer{text-align:center;padding:35px;color:#68787a}.hidden{display:none!important}@media(max-width:600px){.formgrid{grid-template-columns:1fr}.bar{gap:8px}.brand{width:100%}.hero{padding:24px}}
 </style>
 </head>
 <body>
-<header>
-<div class="logo">LiveMarket</div>
-<input id="search" placeholder="Cerca articoli..." oninput="filtra()">
-<button class="secondary" onclick="condividi()">Condividi</button>
-<button class="primary" onclick="mostra('vendi')">+ Vendi</button>
-</header>
-
-<nav>
-<button onclick="mostra('home')">Home</button>
-<button onclick="mostra('prodotti')">Articoli</button>
-<button onclick="mostra('dirette')">🔴 LIVE</button>
-<button onclick="mostra('vendi')">Vendi</button>
-</nav>
-
-<section class="hero">
-<h1>Compra, vendi e scopri le dirette LIVE</h1>
-<p>Il tuo mercato online, semplice e divertente.</p>
-<button onclick="mostra('prodotti')">Scopri gli articoli</button>
-</section>
-
-<main>
-<section id="home">
-<h2>Benvenuto su LiveMarket</h2>
-<p>Scopri i prodotti disponibili e visita la sezione delle dirette.</p>
-</section>
-
-<section id="prodotti">
-<h2>Articoli in vendita</h2>
-<div class="grid" id="catalogo"></div>
-</section>
-
-<section class="live" id="dirette">
-<h2>🔴 Dirette LiveMarket</h2>
-<div class="live-screen">
-<span class="tag">LIVE</span>
-<h2>Le dirette arriveranno qui</h2>
-<p>Presto potrai seguire i venditori in tempo reale.</p>
-</div>
-<p class="muted">La trasmissione video non è ancora attiva.</p>
-</section>
-
-<section class="panel hidden" id="vendi">
-<h2>Pubblica un articolo</h2>
-<p>Inserisci un prodotto nel catalogo dimostrativo.</p>
-<input id="nome" placeholder="Nome articolo"><br><br>
-<input id="prezzo" type="number" min="0" step="0.01" placeholder="Prezzo in euro"><br><br>
-<button class="primary" onclick="aggiungi()">Aggiungi articolo</button>
-<p class="muted">Gli articoli aggiunti sono salvati soltanto su questo dispositivo.</p>
-</section>
-</main>
-
-<footer>© 2026 LiveMarket - Mercato in diretta</footer>
-
+<header><div class="bar"><a class="brand" href="#home">LiveMarket</a><input class="search" id="search" placeholder="Cerca articoli..." aria-label="Cerca articoli"><button id="share">Condividi</button><button class="primary" data-target="vendi">+ Vendi</button></div><nav><button data-target="home">Home</button><button data-target="articoli">Articoli</button><button data-target="dirette">🔴 LIVE</button><button data-target="vendi">Vendi</button></nav></header>
+<main><section class="hero" id="home"><h1>Compra, vendi e scopri LiveMarket</h1><p>Il tuo mercatino online, semplice e intuitivo.</p></section>
+<section id="articoli"><h2>Articoli in vendita</h2><div class="filters"><label for="category">Categoria</label><select id="category"><option value="">Tutte le categorie</option><option>Abbigliamento</option><option>Elettronica</option><option>Videogiochi</option><option>Casa</option><option>Altro</option></select><span class="muted" id="count"></span></div><div class="grid" id="catalog"></div></section>
+<section class="panel" id="dirette"><h2>🔴 Dirette LiveMarket</h2><div class="livebox"><span class="livepill">LIVE</span><h3>Qui vedrai le dirette dei venditori</h3><p>La trasmissione video verrà collegata in futuro al programma Windows LiveMarket Studio.</p></div></section>
+<section class="panel" id="vendi"><h2>Pubblica un articolo</h2><p class="muted">Versione dimostrativa: gli articoli sono salvati soltanto in questo browser, non sono pubblicati per altri utenti.</p><form id="sellForm" class="formgrid"><label class="field">Nome articolo<input id="name" maxlength="100" required placeholder="Es. Giacca vintage"></label><label class="field">Prezzo (€)<input id="price" type="number" min="0.01" step="0.01" required placeholder="25.00"></label><label class="field">Categoria<select id="sellCategory" required><option>Abbigliamento</option><option>Elettronica</option><option>Videogiochi</option><option>Casa</option><option>Altro</option></select></label><label class="field">Nome venditore<input id="seller" maxlength="60" required placeholder="Il tuo nome pubblico"></label><label class="field full">Descrizione<textarea id="description" maxlength="500" rows="3" placeholder="Descrivi l'articolo..."></textarea></label><label class="field full">Foto prodotto (facoltativa, massimo 1 MB)<input id="photo" type="file" accept="image/*"><img class="preview" id="preview" alt="Anteprima foto"></label><div class="full"><button class="primary" type="submit">Aggiungi articolo</button> <span class="muted" id="message" role="status"></span></div></form></section></main><footer>© 2026 LiveMarket · Sito dimostrativo</footer>
 <script>
-const esempi=[
- {nome:"Giacca vintage",prezzo:25,icona:"🧥"},
- {nome:"Scarpe sportive",prezzo:40,icona:"👟"},
- {nome:"Borsa elegante",prezzo:30,icona:"👜"},
- {nome:"Orologio",prezzo:55,icona:"⌚"},
- {nome:"Maglietta",prezzo:12,icona:"👕"},
- {nome:"Videogioco",prezzo:20,icona:"🎮"}
-];
-let articoli;
-try {
- articoli=JSON.parse(localStorage.getItem("livemarket_articoli"))||esempi;
- if(!Array.isArray(articoli)) articoli=esempi;
-} catch(e){articoli=esempi;}
-
-function disegna(){
- const ricerca=document.getElementById("search").value.toLowerCase();
- const elenco=articoli.filter(a=>a.nome.toLowerCase().includes(ricerca));
- const catalogo=document.getElementById("catalogo");
- catalogo.replaceChildren();
- elenco.forEach(a=>{
-  const card=document.createElement("article");
-  card.className="card";
-  const foto=document.createElement("div");
-  foto.className="photo";
-  foto.textContent=a.icona||"📦";
-  const dettagli=document.createElement("div");
-  dettagli.className="details";
-  const titolo=document.createElement("h3");
-  titolo.textContent=a.nome;
-  const prezzo=document.createElement("div");
-  prezzo.className="price";
-  prezzo.textContent=Number(a.prezzo).toLocaleString("it-IT",{style:"currency",currency:"EUR"});
-  const nota=document.createElement("p");
-  nota.className="muted";
-  nota.textContent="Articolo dimostrativo";
-  dettagli.append(titolo,prezzo,nota);
-  card.append(foto,dettagli);
-  catalogo.append(card);
- });
-}
-function filtra(){disegna()}
-function mostra(id){
- ["home","prodotti","dirette","vendi"].forEach(x=>{
-  document.getElementById(x).classList.toggle("hidden",x!==id);
- });
- document.getElementById(id).scrollIntoView({behavior:"smooth"});
-}
-function aggiungi(){
- const nome=document.getElementById("nome").value.trim();
- const prezzo=Number(document.getElementById("prezzo").value);
- if(!nome||!Number.isFinite(prezzo)||prezzo<=0){
-  alert("Inserisci nome e prezzo valido.");return;
- }
- articoli.unshift({nome,prezzo,icona:"📦"});
- try{localStorage.setItem("livemarket_articoli",JSON.stringify(articoli))}catch(e){}
- document.getElementById("nome").value="";
- document.getElementById("prezzo").value="";
- disegna();
- mostra("prodotti");
-}
-async function condividi(){
- const url=location.href;
- try{
-  await navigator.clipboard.writeText(url);
-  alert("Link copiato!");
- }catch(e){
-  prompt("Copia il link:",url);
- }
-}
-disegna();
+'use strict';
+const samples=[{name:'Giacca vintage',price:25,category:'Abbigliamento',seller:'LiveMarket',description:'Giacca in ottime condizioni',emoji:'🧥'},{name:'Scarpe sportive',price:40,category:'Abbigliamento',seller:'LiveMarket',description:'Scarpe comode',emoji:'👟'},{name:'Videogioco',price:20,category:'Videogiochi',seller:'LiveMarket',description:'Gioco usato',emoji:'🎮'},{name:'Orologio',price:55,category:'Altro',seller:'LiveMarket',description:'Orologio elegante',emoji:'⌚'}];
+const $=id=>document.getElementById(id);let items=[];try{const stored=JSON.parse(localStorage.getItem('livemarket_items_v2')||'[]');items=Array.isArray(stored)?stored:[]}catch{};
+function make(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el}
+function render(){const q=$('search').value.trim().toLocaleLowerCase('it');const cat=$('category').value;const visible=[...items,...samples].filter(p=>(!cat||p.category===cat)&&[p.name,p.description,p.seller].some(s=>String(s||'').toLocaleLowerCase('it').includes(q)));$('count').textContent=visible.length+' articoli';$('catalog').replaceChildren();for(const p of visible){const card=make('article','card'),thumb=make('div','thumb');if(p.photo){const img=make('img');img.src=p.photo;img.alt=p.name;thumb.append(img)}else thumb.textContent=p.emoji||'📦';const info=make('div','info');info.append(make('h3','',p.name),make('div','price',Number(p.price).toLocaleString('it-IT',{style:'currency',currency:'EUR'})),make('div','muted',p.category+' · Venditore: '+p.seller),make('p','',p.description||'Nessuna descrizione'));card.append(thumb,info);$('catalog').append(card)}if(!visible.length)$('catalog').append(make('p','muted','Nessun articolo trovato.'))}
+function show(id){if(id==='home')window.scrollTo({top:0,behavior:'smooth'});else $(id).scrollIntoView({behavior:'smooth',block:'start'})}
+document.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.target)));$('search').addEventListener('input',render);$('category').addEventListener('change',render);
+$('share').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);alert('Link del sito copiato!')}catch{prompt('Copia il link del sito:',location.href)}});
+$('photo').addEventListener('change',()=>{const file=$('photo').files[0];$('preview').style.display='none';if(!file)return;if(file.size>1024*1024){alert('La foto deve essere inferiore a 1 MB.');$('photo').value='';return}const reader=new FileReader();reader.onload=()=>{$('preview').src=reader.result;$('preview').style.display='block'};reader.readAsDataURL(file)});
+$('sellForm').addEventListener('submit',e=>{e.preventDefault();const name=$('name').value.trim(),seller=$('seller').value.trim(),price=Number($('price').value);if(!name||!seller||!Number.isFinite(price)||price<=0)return;const photo=$('preview').style.display==='block'?$('preview').src:'';const item={name,seller,price,category:$('sellCategory').value,description:$('description').value.trim(),photo};const updated=[item,...items];try{localStorage.setItem('livemarket_items_v2',JSON.stringify(updated));items=updated;$('sellForm').reset();$('preview').style.display='none';$('message').textContent='Articolo aggiunto su questo dispositivo!';render();show('articoli')}catch{$('message').textContent='Memoria del browser piena: prova con una foto più piccola.'}});render();
 </script>
-</body>
-</html>
+</body></html>
